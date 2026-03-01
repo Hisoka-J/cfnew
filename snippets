@@ -244,11 +244,11 @@ async function handleSubscriptionPage(request, uuid = null) {
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:"Courier New",monospace;background:#000;color:#00ff00;min-height:100vh;overflow-x:hidden;position:relative}
 .matrix-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(45deg,#000 0%,#001100 50%,#000 100%);z-index:-1}
-.matrix-rain{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,0,0.03) 2px,rgba(0,255,0,0.03) 4px);animation:matrix-fall 20s linear infinite;z-index:-1}
+.matrix-rain{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,0,0.03) 2px,rgba(0,255,0,0.03) 4px);animation:matrix-fall 80s linear infinite;z-index:-1}
 @keyframes matrix-fall{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
 .container{max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
 .header{text-align:center;margin-bottom:40px}
-.title{font-size:3rem;font-weight:bold;text-shadow:0 0 10px #00ff00,0 0 20px #00ff00,0 0 30px #00ff00;margin-bottom:10px;animation:matrix-glow 2s ease-in-out infinite alternate}
+.title{font-size:3rem;font-weight:bold;text-shadow:0 0 10px #00ff00,0 0 20px #00ff00,0 0 30px #00ff00;margin-bottom:10px;animation:matrix-glow 4s ease-in-out infinite alternate}
 @keyframes matrix-glow{from{text-shadow:0 0 10px #00ff00,0 0 20px #00ff00,0 0 30px #00ff00}to{text-shadow:0 0 20px #00ff00,0 0 30px #00ff00,0 0 40px #00ff00}}
 .subtitle{color:#00aa00;margin-bottom:30px;font-size:1.2rem}
 .card{background:rgba(0,20,0,0.8);border:2px solid #00ff00;border-radius:0;padding:30px;margin-bottom:20px;box-shadow:0 0 20px rgba(0,255,0,0.3);position:relative}
@@ -262,7 +262,7 @@ body{font-family:"Courier New",monospace;background:#000;color:#00ff00;min-heigh
 .generate-btn{background:rgba(0,255,0,0.1);border:2px solid #00ff00;padding:15px 30px;color:#00ff00;font-family:"Courier New",monospace;font-weight:bold;cursor:pointer;transition:all 0.3s ease;margin-right:15px}
 .generate-btn:hover{background:rgba(0,255,0,0.3);box-shadow:0 0 20px #00ff00;transform:translateY(-2px)}
 .subscription-url{background:rgba(0,0,0,0.8);border:1px solid #00ff00;padding:15px;word-break:break-all;font-family:"Courier New",monospace;color:#00ff00;margin-top:20px;display:none;box-shadow:inset 0 0 10px rgba(0,255,0,0.3)}
-.matrix-text{position:fixed;top:20px;right:20px;color:#00ff00;font-family:"Courier New",monospace;font-size:0.8rem;opacity:0.6;animation:matrix-flicker 3s infinite}
+.matrix-text{position:fixed;top:20px;right:20px;color:#00ff00;font-family:"Courier New",monospace;font-size:0.8rem;opacity:0.6;animation:matrix-flicker 6s infinite}
 @keyframes matrix-flicker{0%,100%{opacity:0.6}50%{opacity:1}}
 </style>
 </head>
@@ -306,22 +306,28 @@ body{font-family:"Courier New",monospace;background:#000;color:#00ff00;min-heigh
 </div>
 <script>
 var SUB_CONVERTER_URL="${apiBaseUrl}";
-function tryOpenApp(schemeUrl,fallbackCallback,timeout){
-timeout=timeout||2500;
 var appOpened=false;
 var callbackExecuted=false;
-var startTime=Date.now();
-var blurHandler=function(){
+var startTime=0;
+var blurHandler=function(){};
+var hiddenHandler=function(){};
+var iframe=null;
+function tryOpenApp(schemeUrl,fallbackCallback,timeout){
+timeout=timeout||2500;
+appOpened=false;
+callbackExecuted=false;
+startTime=Date.now();
+blurHandler=function(){
 var elapsed=Date.now()-startTime;
 if(elapsed<3000&&!callbackExecuted){appOpened=true;}
 };
 window.addEventListener('blur',blurHandler);
-var hiddenHandler=function(){
+hiddenHandler=function(){
 var elapsed=Date.now()-startTime;
 if(elapsed<3000&&!callbackExecuted){appOpened=true;}
 };
 document.addEventListener('visibilitychange',hiddenHandler);
-var iframe=document.createElement('iframe');
+iframe=document.createElement('iframe');
 iframe.style.display='none';
 iframe.style.width='1px';
 iframe.style.height='1px';
